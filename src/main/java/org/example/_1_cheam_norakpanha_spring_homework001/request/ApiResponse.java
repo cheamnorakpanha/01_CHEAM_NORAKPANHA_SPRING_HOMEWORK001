@@ -15,9 +15,9 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class ApiResponse<T> {
-    boolean success;
-    String message;
-    HttpStatus status;
+    private boolean success;
+    private String message;
+    private HttpStatus status;
     private T payload;
 
     @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
