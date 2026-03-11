@@ -9,7 +9,6 @@ import org.springframework.core.io.ResourceLoader;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -32,17 +31,25 @@ public class TicketController {
         ticketList.add(new Ticket(autoId(), "Anna Lee", LocalDate.parse("2026-03-16"), "Phnom Penh", "Battambang", 18.00, true, Status.COMPLETED, "8"));
         ticketList.add(new Ticket(autoId(), "Sok Dara", LocalDate.parse("2026-03-17"), "Siem Reap", "Phnom Penh", 15.50, true, Status.BOOKED, "5"));
         ticketList.add(new Ticket(autoId(), "Sok Dara", LocalDate.parse("2026-01-20"), "Siem Reap", "Phnom Penh", 30.50, false, Status.CANCELLED, "2"));
+        ticketList.add(new Ticket(autoId(), "Dara Chan", LocalDate.parse("2026-03-18"), "Phnom Penh", "Kampot", 12.00, true, Status.BOOKED, "3"));
+        ticketList.add(new Ticket(autoId(), "Lina Kim", LocalDate.parse("2026-03-19"), "Battambang", "Phnom Penh", 17.50, true, Status.COMPLETED, "9"));
+        ticketList.add(new Ticket(autoId(), "Vanna Sok", LocalDate.parse("2026-03-20"), "Siem Reap", "Battambang", 14.00, false, Status.CANCELLED, "7"));
+        ticketList.add(new Ticket(autoId(), "David Lim", LocalDate.parse("2026-03-21"), "Phnom Penh", "Sihanoukville", 20.00, true, Status.BOOKED, "11"));
+        ticketList.add(new Ticket(autoId(), "Srey Mom", LocalDate.parse("2026-03-22"), "Kampot", "Phnom Penh", 13.50, true, Status.COMPLETED, "6"));
+        ticketList.add(new Ticket(autoId(), "Chantha Ly", LocalDate.parse("2026-03-23"), "Phnom Penh", "Siem Reap", 16.75, false, Status.CANCELLED, "4"));
         this.resourceLoader = resourceLoader;
     }
 
     // 1. Create a Ticket
     @Operation(summary = "Create a new ticket")
     @PostMapping("/tickets")
-    public ResponseEntity<ApiResponse<List<Ticket>>> createNewTicket(@RequestBody Ticket ticketRequest) {
+    public ResponseEntity<ApiResponse<Ticket>> createNewTicket(@RequestBody Ticket ticketRequest) {
+
         ticketRequest.setTicketId(autoId());
         ticketList.add(ticketRequest);
-        ApiResponse<List<Ticket>> Response = new ApiResponse<>(true, "Ticket created successfully.", HttpStatus.CREATED, ticketList, LocalDateTime.now());
-        return ResponseEntity.ok(Response);
+
+        ApiResponse<Ticket> Response = new ApiResponse<>(true, "Ticket created successfully.", HttpStatus.CREATED, ticketRequest, LocalDateTime.now());
+        return ResponseEntity.status(HttpStatus.CREATED).body(Response);
     }
 
     // 2. Retrieve all tickets
@@ -77,7 +84,6 @@ public class TicketController {
     public ResponseEntity<ApiResponse<List<Ticket>>> searchTicketByName(@RequestParam(value = "passengerName") String passengerName) {
 
         List<Ticket> searchResult = new ArrayList<>();
-
         for (Ticket ticket : ticketList) {
             if (ticket.getPassengerName().equals(passengerName)) {
                 searchResult.add(ticket);
@@ -98,7 +104,6 @@ public class TicketController {
     public ResponseEntity<ApiResponse<List<Ticket>>> filteredTicketByStatusDate(@RequestParam Status status, @RequestParam LocalDate date) {
 
         List<Ticket> filteredTicket = new ArrayList<>();
-
         for (Ticket ticket : ticketList) {
             if (ticket.getTicketStatus() == status && ticket.getTravelDate().equals(date)) {
                 filteredTicket.add(ticket);
@@ -106,13 +111,11 @@ public class TicketController {
         }
 
         String message;
-
         if (filteredTicket.isEmpty()) {
             message = "No tickets found with given filters";
         } else {
             message = "Tickets filtered successfully.";
         }
-
         ApiResponse<List<Ticket>> Response = new ApiResponse<>(true, message, HttpStatus.OK, filteredTicket, LocalDateTime.now());
         return ResponseEntity.ok(Response);
     }
@@ -136,7 +139,7 @@ public class TicketController {
                 return ResponseEntity.ok(response);
             }
         }
-        ApiResponse<Ticket> Error = new ApiResponse<>(false, "No tickets found with the given ID.", HttpStatus.OK, null, LocalDateTime.now());
+        ApiResponse<Ticket> Error = new ApiResponse<>(false, "No tickets found with the given ID.", HttpStatus.NOT_FOUND, null, LocalDateTime.now());
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Error);
     }
 
