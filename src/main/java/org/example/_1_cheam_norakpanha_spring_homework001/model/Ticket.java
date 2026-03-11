@@ -13,20 +13,16 @@ import java.time.LocalDate;
 public class Ticket {
     @Schema(hidden = true)
     private Long ticketId;
-
     private String passengerName;
 
     @JsonFormat(pattern = "yyyy-MM-dd")
     @Schema(example = "2026-03-11")
     private LocalDate travelDate;
-
     private String sourceStation;
     private String destinationStation;
 
     @Schema(example = "0")
     private double price;
-
-//    @Schema(example = true)
     private boolean paymentStatus;
 
     @Schema(example = "BOOKED")

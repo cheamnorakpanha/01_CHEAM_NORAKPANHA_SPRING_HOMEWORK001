@@ -16,7 +16,7 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicLong;
 
 @RestController
-@RequestMapping("/api/v1")
+@RequestMapping("/api/v1/tickets")
 public class TicketController {
     private final ResourceLoader resourceLoader;
     List<Ticket> ticketList = new ArrayList<>();
@@ -42,7 +42,7 @@ public class TicketController {
 
     // 1. Create a Ticket
     @Operation(summary = "Create a new ticket")
-    @PostMapping("/tickets")
+    @PostMapping
     public ResponseEntity<ApiResponse<Ticket>> createNewTicket(@RequestBody Ticket ticketRequest) {
 
         ticketRequest.setTicketId(autoId());
@@ -54,7 +54,7 @@ public class TicketController {
 
     // 2. Retrieve all tickets
     @Operation(summary = "Get all tickets")
-    @GetMapping("/tickets")
+    @GetMapping
     public ResponseEntity<ApiResponse<List<Ticket>>> getAllTickets() {
         if (ticketList.isEmpty()) {
             ApiResponse<List<Ticket>> error = new ApiResponse<>(false, "No tickets found.", HttpStatus.NOT_FOUND, null, LocalDateTime.now());
@@ -66,7 +66,7 @@ public class TicketController {
 
     // 3. Retrieve a tickets by ID
     @Operation(summary = "Get a ticket by ID")
-    @GetMapping("/tickets/{ticket-id}")
+    @GetMapping("/{ticket-id}")
     public ResponseEntity<ApiResponse<Ticket>> getTicketById(@PathVariable("ticket-id") Long ticketId) {
         for (Ticket ticket : ticketList) {
             if (ticket.getTicketId().equals(ticketId)) {
@@ -80,7 +80,7 @@ public class TicketController {
 
     // 4. Search Ticket(s) by Passenger Name
     @Operation(summary = "Search for ticket(s) by passenger name")
-    @GetMapping("/tickets/search")
+    @GetMapping("/search")
     public ResponseEntity<ApiResponse<List<Ticket>>> searchTicketByName(@RequestParam(value = "passengerName") String passengerName) {
 
         List<Ticket> searchResult = new ArrayList<>();
@@ -100,7 +100,7 @@ public class TicketController {
 
     // 5. Filter Tickets by Ticket Status and Travel Date
     @Operation(summary = "Filter tickets by status and travel date")
-    @GetMapping("/tickets/filter")
+    @GetMapping("/filter")
     public ResponseEntity<ApiResponse<List<Ticket>>> filteredTicketByStatusDate(@RequestParam Status status, @RequestParam LocalDate date) {
 
         List<Ticket> filteredTicket = new ArrayList<>();
@@ -122,7 +122,7 @@ public class TicketController {
 
     // 6. Update a Ticket by ID
     @Operation(summary = "Update a ticket by ID")
-    @PutMapping("/tickets/{id}")
+    @PutMapping("/{id}")
     public ResponseEntity<ApiResponse<Ticket>> updateTicketById(@PathVariable("id") Long ticketId, @RequestBody Ticket ticket) {
         for (Ticket tickets : ticketList) {
             if (tickets.getTicketId().equals(ticketId)) {
@@ -145,7 +145,7 @@ public class TicketController {
 
     // 7. Delete a ticket by ID
     @Operation(summary = "Delete a ticket using ID")
-    @DeleteMapping("/tickets/{id}")
+    @DeleteMapping("/{id}")
     public ResponseEntity<ApiResponse<String>> deleteTicketById(@PathVariable("id") Long ticketId) {
         boolean deleteTicket = ticketList.removeIf(ticket -> ticket.getTicketId().equals(ticketId));
 
